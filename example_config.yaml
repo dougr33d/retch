@@ -1,0 +1,15 @@
+---
+
+load_store: &load_store
+  group_name: Load Store
+  path: ldst/
+  children:
+    - load_valid
+    - store_valid
+
+duts:
+  core:
+    group_name: Core
+    path: /top/core/
+    children:
+      - *load_store
