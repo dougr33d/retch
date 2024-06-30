@@ -45,7 +45,7 @@ class AbstractNode(abc.ABC):
         else:
             return dict(**self._var_dict, **self._parent._get_full_var_dict()) 
         
-    def _expand_str_with_var_dict(self, s:str|None) -> str:
+    def _expand_str_with_var_dict(self, s:str|None) -> Any:
         if not isinstance(s,str):
             return s
         vd = self._get_full_var_dict()
