@@ -32,8 +32,8 @@ class GroupNode(AbstractNode):
             else:
                 return []
 
-    def __init__(self, nf: Any, parent: Any, param_dict: dict | None = None, var_dict: dict|None = None) -> None:
-        super().__init__(nf=nf, parent=parent, param_dict=param_dict, var_dict=var_dict)
+    def __init__(self, nf: Any, renderer:Any, parent: Any, param_dict: dict | None = None, var_dict: dict|None = None) -> None:
+        super().__init__(nf=nf, renderer=renderer, parent=parent, param_dict=param_dict, var_dict=var_dict)
         if self._parent == None:
             self._update_param('group_name', 'required', True)
         self._register_param_def('children', list, required=False, inherits=False)

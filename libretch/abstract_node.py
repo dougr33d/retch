@@ -54,12 +54,15 @@ class AbstractNode(abc.ABC):
     def _set_var(self, k: str, v: Any) -> None:
         self._var_dict[k] = v
     
-    def __init__(self, nf: Any, parent: Any, param_dict: dict | None = None, var_dict: dict | None = None) -> None:
+    def __init__(self, nf: Any, renderer: Any, parent: Any, param_dict: dict | None = None, var_dict: dict | None = None) -> None:
         self._parent = parent
         self._params: dict = param_dict or {}
         self._param_defs: dict = {}
         self._node_factory = nf
         self._var_dict: dict = var_dict or {}
+        self._renderer = renderer
+        if (renderer == None):
+            self._renderer = parent._renderer
 
         self._init_param_defs()
 

@@ -1,4 +1,4 @@
-SYS_PYTHON = $(shell which python3.11)
+SYS_PYTHON = $(shell which python3.12)
 ENV_PYTHON = venv/bin/python3
 REQUIREMENTS_TXT = requirements.txt
 EXAMPLE_YAML = example_config.yaml
@@ -18,7 +18,7 @@ lint: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
 
 $(ENV_PYTHON): $(REQUIREMENTS_TXT)
 	${SYS_PYTHON} -m venv venv
-	source venv/bin/activate && pip install --upgrade pip && pip install -r $(REQUIREMENTS_TXT)
+	. venv/bin/activate && pip install --upgrade pip && pip install -r $(REQUIREMENTS_TXT)
 
 test:
 	$(ENV_PYTHON) -m pytest

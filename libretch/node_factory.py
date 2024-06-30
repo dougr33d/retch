@@ -17,7 +17,7 @@ class NodeFactory:
     def register_node_type(self, nt):
         self._node_types.append(nt)
 
-    def new_node(self, parent: Any, candidate: dict|str, var_dict: dict|None = None):
+    def new_node(self, parent: Any, candidate: dict|str, renderer: Any = None, var_dict: dict|None = None):
         mats = [nt for nt in self._node_types if nt.matches(candidate)]
         if len(mats) == 0:
             logger.error("Could not find suitable NodeType!")
@@ -29,4 +29,4 @@ class NodeFactory:
             exit(-1)
         else:
             nt = mats[0]
-            return nt(nf=self, parent=parent, param_dict=candidate, var_dict=var_dict)
+            return nt(nf=self, renderer=renderer, parent=parent, param_dict=candidate, var_dict=var_dict)

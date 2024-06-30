@@ -12,8 +12,8 @@ class RepeatNode(GroupNode):
         return candidate.get('type', 'group') == 'repeat'
 
     ### private member methods
-    def __init__(self, nf: Any, parent: Any, param_dict: dict|None = None, var_dict: dict|None = None) -> None:
-        super().__init__(nf=nf, parent=parent, param_dict=param_dict, var_dict=var_dict)
+    def __init__(self, nf: Any, parent: Any, renderer: Any = None, param_dict: dict|None = None, var_dict: dict|None = None) -> None:
+        super().__init__(nf=nf, renderer=renderer, parent=parent, param_dict=param_dict, var_dict=var_dict)
         self._register_param_def('var',   str, required=True, inherits=False)
         self._register_param_def('count', int, required=True, inherits=False)
         self._register_param_def('child', Any, required=True, inherits=False)

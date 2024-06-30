@@ -1,6 +1,7 @@
 import textwrap
 
 from ..libretch.node_factory import NodeFactory
+from ..libretch.rcfile_renderer import RCFileRenderer
 
 def test_group_node():
     rcdict = {'group_name': 'top',
@@ -12,7 +13,8 @@ def test_group_node():
                   ]}
 
     nf = NodeFactory()
-    dut_node = nf.new_node(parent=None, candidate=rcdict, var_dict={'_foo': 'bar'})
+    renderer = RCFileRenderer()
+    dut_node = nf.new_node(parent=None, renderer=renderer, candidate=rcdict, var_dict={'_foo': 'bar'})
     exp = textwrap.dedent("""\
     addGroup top
     addSubGroup lvl2_bar
