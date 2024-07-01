@@ -16,9 +16,6 @@ class GroupNode(AbstractNode):
     def _render_end_group(self) -> list[str]:
         return self._renderer.end_group(self)
 
-    def _is_expanded(self) -> bool:
-        return True
-
     def __init__(self, nf: Any, renderer:Any, parent: Any, param_dict: dict | None = None, var_dict: dict|None = None) -> None:
         super().__init__(nf=nf, renderer=renderer, parent=parent, param_dict=param_dict, var_dict=var_dict)
         if self._parent == None:
@@ -26,6 +23,10 @@ class GroupNode(AbstractNode):
         self._register_param_def('children', list, required=False, inherits=False)
 
     ### Public methods
+
+    @property
+    def is_expanded(self) -> bool:
+        return True
 
     def render(self) -> list[str]:
         lines = []

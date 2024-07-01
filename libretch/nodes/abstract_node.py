@@ -25,7 +25,7 @@ class AbstractNode(abc.ABC):
     ### private member methods
     def _update_param(self, k: str, fld: str, val: Any) -> None:
         if not k in self._param_defs:
-            self._croak(f'Parameter {k} not yet registered with this NodeType')
+            self.croak(f'Parameter {k} not yet registered with this NodeType')
         self._param_defs[k][fld] = val
 
     def _register_param_def(self, k: str, t: Any = str, required: bool = False, inherits: bool = False) -> None:
@@ -66,7 +66,7 @@ class AbstractNode(abc.ABC):
 
         self._init_param_defs()
 
-    def _croak(self, msg: str | None = None) -> None:
+    def croak(self, msg: str | None = None) -> None:
         if msg != None:
             print(f"> {msg}")
         exit(-1)
@@ -75,7 +75,7 @@ class AbstractNode(abc.ABC):
     def _validate_param(self, k: str) -> None:
         if k not in self._param_defs:
             keys = "{" + ", ".join(sorted(self._param_defs.keys())) + "}"
-            self._croak(f"Could not find key {k} in param_defs. Key must be one of: {keys}")
+            self.croak(f"Could not find key {k} in param_defs. Key must be one of: {keys}")
 
     def _get_full_param_dict(self) -> dict:
         if self._parent != None:

@@ -64,7 +64,7 @@ class GTKWaveRenderer(AbstractRenderer):
 
     def start_group(self, node: GroupNode) -> list:
         magic = self._to_magic(TraceEntFlagBits.TR_GRP_BEGIN, TraceEntFlagBits.TR_BLANK)
-        if (not node._is_expanded()):
+        if (not node.is_expanded):
             magic = self._to_magic(TraceEntFlagBits.TR_GRP_BEGIN, TraceEntFlagBits.TR_BLANK, TraceEntFlagBits.TR_COLLAPSED)
 
         grp = node._expand_str_with_var_dict(node._get_param('group_name',None))
