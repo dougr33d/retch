@@ -11,26 +11,13 @@ class GroupNode(AbstractNode):
 
     ### private member methods
     def _render_start_group(self) -> list[str]:
-        grp = self._expand_str_with_var_dict(self._get_param('group_name',None))
-        if self._parent == None:
-            return [f"addGroup {grp}"]
-        else:
-            # addSubGroup (or ignore if no group name)
-            if grp != None:
-                return [f"addSubGroup {grp}"]
-            else:
-                return []
+        return self._renderer.start_group(self)
 
     def _render_end_group(self) -> list[str]:
-        grp = self._expand_str_with_var_dict(self._get_param('group_name',None))
-        if self._parent == None:
-            return []
-        else:
-            # endSubGroup (or ignore if no group name)
-            if grp != None:
-                return [f"endSubGroup {grp}"]
-            else:
-                return []
+        return self._renderer.end_group(self)
+
+    def _is_expanded(self) -> bool:
+        return True
 
     def __init__(self, nf: Any, renderer:Any, parent: Any, param_dict: dict | None = None, var_dict: dict|None = None) -> None:
         super().__init__(nf=nf, renderer=renderer, parent=parent, param_dict=param_dict, var_dict=var_dict)

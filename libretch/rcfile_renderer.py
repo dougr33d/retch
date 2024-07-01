@@ -16,7 +16,7 @@ class RCFileRenderer(AbstractRenderer):
     Renders signals and groups in RC files
     """
 
-    def start_group(node: GroupNode) -> list:
+    def start_group(self, node: GroupNode) -> list:
         grp = node._expand_str_with_var_dict(node._get_param('group_name',None))
         if node._parent == None:
             return [f"addGroup {grp}"]
@@ -27,7 +27,7 @@ class RCFileRenderer(AbstractRenderer):
             else:
                 return []
 
-    def end_group(node: GroupNode) -> list:
+    def end_group(self, node: GroupNode) -> list:
         grp = node._expand_str_with_var_dict(node._get_param('group_name',None))
         if node._parent == None:
             return []
@@ -38,7 +38,7 @@ class RCFileRenderer(AbstractRenderer):
             else:
                 return []
 
-    def signal(node: AbstractNode) -> list:
+    def signal(self, node: AbstractNode) -> list:
         sig = node._expand_str_with_var_dict(node._get_param('group_name'))
         lines = [f"addSignal -h 15 {node.full_path}{sig}"]
         return lines

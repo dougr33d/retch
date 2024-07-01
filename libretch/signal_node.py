@@ -25,6 +25,4 @@ class SignalNode(AbstractNode):
 
     ### Public methods
     def render(self) -> list[str]:
-        sig = self._expand_str_with_var_dict(self._get_param('group_name'))
-        lines = [f"addSignal -h 15 {self.full_path}{sig}"]
-        return lines
+        return self._renderer.signal(self)
