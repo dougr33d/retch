@@ -6,15 +6,17 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s %(message)s')
 
-from libretch.group_node import GroupNode
-from libretch.abstract_node import AbstractNode
-from libretch.abstract_renderer import AbstractRenderer
+from libretch.nodes.group_node import GroupNode
+from libretch.nodes.abstract_node import AbstractNode
+from libretch.renderers.abstract_renderer import AbstractRenderer
 
 class RCFileRenderer(AbstractRenderer):
     """RCFile Renderer
     
     Renders signals and groups in RC files
     """
+
+    format = 'rc'
 
     def start_group(self, node: GroupNode) -> list:
         grp = node._expand_str_with_var_dict(node._get_param('group_name',None))

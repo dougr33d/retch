@@ -3,9 +3,9 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s %(message)s')
 
-from .group_node import GroupNode
-from .signal_node import SignalNode
-from .repeat_node import RepeatNode
+from .nodes.group_node import GroupNode
+from .nodes.signal_node import SignalNode
+from .nodes.repeat_node import RepeatNode
 
 class NodeFactory:
     def __init__(self):

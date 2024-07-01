@@ -7,8 +7,8 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s %(message)s')
 
-from libretch.group_node import GroupNode
-from libretch.abstract_node import AbstractNode
+from libretch.nodes.group_node import GroupNode
+from libretch.nodes.abstract_node import AbstractNode
 
 class AbstractRenderer(abc.ABC):
     """Abstract renderer class
@@ -20,14 +20,17 @@ class AbstractRenderer(abc.ABC):
     signal() -> str
     """
 
+    # replace this in subclasses!
+    format = 'abstract'
+
     @abc.abstractmethod
-    def start_group(node: GroupNode) -> str:
+    def start_group(self, node: GroupNode) -> list[str]:
         pass
 
     @abc.abstractmethod
-    def end_group(node: GroupNode) -> str:
+    def end_group(self, node: GroupNode) -> list[str]:
         pass
 
     @abc.abstractmethod
-    def signal(node: AbstractNode) -> str:
+    def signal(self, node: AbstractNode) -> list[str]:
         pass

@@ -1,7 +1,7 @@
 import textwrap
 
 from ..libretch.node_factory import NodeFactory
-from ..libretch.rcfile_renderer import RCFileRenderer
+from ..libretch.renderers.rcfile_renderer import RCFileRenderer
 
 def test_group_node():
     rcdict = {'group_name': 'top',

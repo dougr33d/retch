@@ -2,6 +2,7 @@ SYS_PYTHON = $(shell which python3.12)
 ENV_PYTHON = venv/bin/python3
 REQUIREMENTS_TXT = requirements.txt
 EXAMPLE_YAML = example_config.yaml
+VROOM_YAML = vroom.yaml
 RETCH_BIN = retch.py
 
 .PHONY: init lint run all
@@ -9,8 +10,16 @@ all: init lint test
 
 init: $(ENV_PYTHON)
 
-run: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
-	$(ENV_PYTHON) $(RETCH_BIN) $(EXAMPLE_YAML)
+run: example.rc example.gtkw
+
+example.rc: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
+	$(ENV_PYTHON) $(RETCH_BIN) $(EXAMPLE_YAML) -f rc $@
+
+example.gtkw: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
+	$(ENV_PYTHON) $(RETCH_BIN) $(EXAMPLE_YAML) -f gtkw $@
+
+vroom.gtkw: $(REQUIREMENTS_TXT) $(VROOM_YAML)
+	$(ENV_PYTHON) $(RETCH_BIN) $(VROOM_YAML) -f gtkw $@
 
 lint: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
 	$(ENV_PYTHON) -m mypy $(RETCH_BIN)

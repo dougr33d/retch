@@ -18,13 +18,17 @@ def main(args):
     td = y['duts'][args.dut]
 
     node_factory = NodeFactory()
-    dut_node = GroupNode(nf=node_factory, parent=None, param_dict=td)
-    print("\n".join(dut_node.render()))
+    renderer = RendererFactory().new_renderer(args.format)
+    dut_node = GroupNode(nf=node_factory, renderer=renderer, parent=None, param_dict=td)
+    text = "\n".join(dut_node.render())
+    args.outfile.write(text)
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(prog='retch', description='RC file generator')
     parser.add_argument('rc_config', type=argparse.FileType('r'), help='YAML RC spec')
     parser.add_argument('-d', '--dut', type=str, default='core', help='DUT to build from RC spec')
+    parser.add_argument('-f', '--format', default='gtkw', choices=['gtkw', 'rc'])
+    parser.add_argument('outfile', type=argparse.FileType('w'))
     args = parser.parse_args()
     main(args)
 

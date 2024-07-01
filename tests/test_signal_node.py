@@ -1,7 +1,7 @@
 import textwrap
 
 from ..libretch.node_factory import NodeFactory
-from ..libretch.rcfile_renderer import RCFileRenderer
+from ..libretch.renderers.rcfile_renderer import RCFileRenderer
 
 def test_signal_node_basic():
     nf = NodeFactory()

@@ -7,9 +7,9 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s %(message)s')
 
-from libretch.group_node import GroupNode
-from libretch.abstract_node import AbstractNode
-from libretch.abstract_renderer import AbstractRenderer
+from libretch.nodes.group_node import GroupNode
+from libretch.nodes.abstract_node import AbstractNode
+from libretch.renderers.abstract_renderer import AbstractRenderer
 
 class TraceEntFlagBits(IntEnum):
     TR_HIGHLIGHT = 0
@@ -53,6 +53,8 @@ class GTKWaveRenderer(AbstractRenderer):
     
     Renders signals and groups in gtkwave save files
     """
+
+    format = 'gtkw'
 
     def _to_magic(self, *flags) -> str:
         magic = 0

@@ -1,9 +1,9 @@
 import textwrap
 
-from ..libretch.repeat_node import RepeatNode
-from ..libretch.signal_node import SignalNode
+from ..libretch.nodes.repeat_node import RepeatNode
+from ..libretch.nodes.signal_node import SignalNode
 from ..libretch.node_factory import NodeFactory
-from ..libretch.rcfile_renderer import RCFileRenderer
+from ..libretch.renderers.rcfile_renderer import RCFileRenderer
 
 def test_repeat_node():
     node_factory = NodeFactory()

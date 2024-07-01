@@ -1,7 +1,7 @@
 import textwrap
 
 from ..libretch.node_factory import NodeFactory
-from ..libretch.gtkw_renderer import GTKWaveRenderer
+from ..libretch.renderers.gtkw_renderer import GTKWaveRenderer
 
 def test_group_node():
     rcdict = {'group_name': 'top',

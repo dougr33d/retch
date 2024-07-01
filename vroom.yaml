@@ -1,0 +1,47 @@
+---
+
+fetch: &fetch
+  group_name: FETCH
+  path: fetch/
+  children:
+    - valid_fe1
+    - irom_index[6:0]
+    - group_name: FB -> IC Req
+      children:
+        - fb_ic_req_nnn.valid 
+        - fb_ic_req_nnn.addr[63:0]
+    - group_name: FB <- IC Req
+      children:
+        - ic_fb_rsp_nnn.valid
+        - ic_fb_rsp_nnn.data.flat[511:0]
+        - ic_fb_rsp_nnn.__addr_inst[63:0]
+
+
+decode: &decode
+  group_name: DECODE
+  path: decode/
+  children:
+    # - group_name: DE0
+    #   children:
+    #     - valid_dex[0]
+    - group_name: DE1
+      children:
+        - valid_dex[1]
+        - uinstr_de1/pc[63:0]
+
+exec: &exec
+  group_name: EXE
+  path: exe/
+  children:
+    - group_name: EX1
+      children:
+        - result_ex1[63:0]
+
+duts:
+  core:
+    group_name: Core
+    path: /TOP/top/core/
+    children:
+      - *fetch
+      - *decode
+      - *exec

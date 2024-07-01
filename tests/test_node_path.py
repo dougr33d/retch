@@ -1,9 +1,9 @@
 import pytest
 
-from ..libretch.group_node import GroupNode
-from ..libretch.signal_node import SignalNode
+from ..libretch.nodes.group_node import GroupNode
+from ..libretch.nodes.signal_node import SignalNode
 from ..libretch.node_factory import NodeFactory
-from ..libretch.rcfile_renderer import RCFileRenderer
+from ..libretch.renderers.rcfile_renderer import RCFileRenderer
 
 def test_node_path():
     node_factory = NodeFactory()
