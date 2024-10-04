@@ -21,12 +21,16 @@ class GroupNode(AbstractNode):
         if self._parent == None:
             self._update_param('group_name', 'required', True)
         self._register_param_def('children', list, required=False, inherits=False)
+        self._register_param_def('expand',   bool, required=False, inherits=False)
+        self._register_param_def('expand_all',   bool, required=False, inherits=True)
 
     ### Public methods
 
     @property
     def is_expanded(self) -> bool:
-        return True
+        if (e := self._get_param('expand', None)) != None:
+            return e
+        return self._get_param('expand_all', True)
 
     def render(self) -> list[str]:
         lines = []

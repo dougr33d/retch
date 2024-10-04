@@ -2,15 +2,38 @@
 
 fetch: &fetch
   group_name: FETCH
-  path: fetch/
+  expand: False
+  expand_all: True
+  path: fe/
   children:
     - valid_fe1
     - irom_index[6:0]
-    - group_name: FB -> IC Req
+    - group_name: Fetch Ctl
+      path: fe_ctl/
       children:
-        - fb_ic_req_nnn.valid 
+        - valid_fe1
+        - instr_fe1.pc[63:0]
+        - nuke_pdg
+        - type: signal
+          enum: True
+          group_name: state[2:0]
+        - nuke_rb1.valid
+        - group_name: Corrections
+          children:
+            - br_mispred_ex0.valid
+            - br_mispred_ex0.target_addr[63:0]
+            - br_mispred_ex0.robid.idx[2:0]
+            - br_mispred_ql_ex0
+            - br_mispred_pdg
+            - PCNxt[63:0]
+
+    - group_name: FB -> IC Req
+      expand: false
+      children:
+        - fb_ic_req_nnn.valid
         - fb_ic_req_nnn.addr[63:0]
     - group_name: FB <- IC Req
+      expand: false
       children:
         - ic_fb_rsp_nnn.valid
         - ic_fb_rsp_nnn.data.flat[511:0]
@@ -18,6 +41,8 @@ fetch: &fetch
 
 
 decode: &decode
+  expand: False
+  expand_all: True
   group_name: DECODE
   path: decode/
   children:
@@ -29,19 +54,307 @@ decode: &decode
         - valid_dex[1]
         - uinstr_de1/pc[63:0]
 
+ibr: &ibr
+  group_name: IBR
+  children:
+    - br_mispred_ex0.valid
+    - br_mispred_ex0.ucbr
+    - br_mispred_ex0.restore_pc[63:0]
+    - br_mispred_ex0.restore_useq[11:0]
+    - br_mispred_ex0.robid.idx[2:0]
+
+
 exec: &exec
+  expand: False
+  expand_all: True
   group_name: EXE
   path: exe/
   children:
-    - group_name: EX1
+    - *ibr
+
+mem_pipe: &mem_pipe
+  group_name: Mem Pipe
+  path: mempipe/
+  expand: false
+  children:
+    - group_name: MM0
       children:
-        - result_ex1[63:0]
+        - valid_mmx[0]
+    - group_name: MM1
+      children:
+        - valid_mmx[1]
+    - group_name: MM2
+      children:
+        - valid_mmx[2]
+    - group_name: MM3
+      children:
+        - valid_mmx[3]
+    - group_name: MM4
+      children:
+        - valid_mmx[4]
+    - group_name: MM5
+      children:
+        - valid_mmx[5]
+        - flq_alloc_mmx[5]
+        - hit_mmx[5]
+        - hit_vec_mmx[5][7:0]
+
+mem_ldq_ent: &mem_ldq_ent
+  children:
+    - e_alloc_rs0
+    - e_iss_rs0
+    - e_valid
+    - type: signal
+      enum: True
+      group_name: fsm[2:0]
+    - e_complete_mm5
+    - e_static.vaddr[63:0]
+
+mem_ldq: &mem_ldq
+  expand: False
+  expand_all: False
+  group_name: LoadQ
+  path: loadq/
+  children:
+    - e_valid[7:0]
+    - type: repeat
+      var: _eid
+      count: 8
+      child:
+        <<: *mem_ldq_ent
+        group_name: Entry {_eid}
+        path: g_ldq_entries[{_eid}]/loadq_entry/
+
+mem_stq_ent: &mem_stq_ent
+  children:
+    - e_alloc_rs0
+    - e_iss_rs0
+    - e_valid
+    - type: signal
+      enum: True
+      group_name: fsm[3:0]
+    - e_complete_mm5
+    - e_static.vaddr[63:0]
+
+mem_stq: &mem_stq
+  expand: False
+  expand_all: False
+  group_name: StoreQ
+  path: storeq/
+  children:
+    - e_valid[7:0]
+    - type: repeat
+      var: _eid
+      count: 8
+      child:
+        <<: *mem_stq_ent
+        group_name: Entry {_eid}
+        path: g_stq_entries[{_eid}]/storeq_entry/
+
+mem_flq_ent: &mem_flq_ent
+  children:
+    - e_alloc_mm0
+    - e_valid
+    - type: signal
+      enum: True
+      group_name: fsm[2:0]
+    - e_complete_mm5
+    - e_static.paddr[63:0]
+
+mem_flq: &mem_flq
+  expand: False
+  expand_all: False
+  group_name: FillQ
+  path: fillq/
+  children:
+    - e_valid[7:0]
+    - type: repeat
+      var: _eid
+      count: 8
+      child:
+        <<: *mem_flq_ent
+        group_name: Entry {_eid}
+        path: g_flq_entries[{_eid}]/fillq_entry/
+
+mem: &mem
+  expand: False
+  expand_all: True
+  group_name: MEM
+  path: mem/
+  children:
+    - *mem_stq
+    - *mem_ldq
+    - *mem_flq
+    - *mem_pipe
+
+l2: &l2
+  expand: False
+  expand_all: True
+  group_name: L2
+  path: l2/
+  children:
+    - type: repeat
+      var: _p
+      count: 2
+      child:
+        group_name: Port {_p}
+        expand: False
+        children:
+          - group_name: Req
+            path: all_req_pkts[{_p}]/
+            children:
+              - valid
+              - op[1:0]
+              - id[2:0]
+              - addr[63:0]
+              - data[511:0]
+          - group_name: Rsp
+            path: all_rsp_pkts[{_p}]/
+            children:
+              - valid
+              - id[2:0]
+              - data.flat[511:0]
+
+rob_ent: &rob_ent
+  group_name: ROB Entry
+  children:
+    - type: signal
+      enum: True
+      group_name: fsm[1:0]
+    - s.uinstr.pc
+    - e_result[63:0]
+
+rob_restore_fsm: &rob_restore_fsm
+  group_name: RR FSM
+  children:
+    - q_alloc_rn0
+    - type: signal
+      enum: True
+      group_name: rr_fsm[1:0]
+    - rr_cntr[3:0]
+
+rob: &rob
+  expand: False
+  expand_all: True
+  group_name: ROB
+  path: rob/
+  children:
+    - head_id
+    - tail_id
+    - rob_empty_de1
+    - rob_full_de1
+    - *rob_restore_fsm
+    - group_name: Entries
+      expand: false
+      children:
+        - type: repeat
+          var: _eid
+          count: 8
+          child:
+            <<: *rob_ent
+            group_name: Entry {_eid}
+            path: g_rob_ents[{_eid}]/rbent/
+
+rs_entry: &rs_entry
+  expand: false
+  children:
+    - e_valid[7:0]
+    - type: signal
+      enum: True
+      group_name: fsm
+    - e_alloc_rs0
+    - e_dealloc_any
+    - src_ready_rs1[1:0]
+    - group_name: Src1
+      expand: false
+      children:
+        - type: signal
+          enum: true
+          group_name: g_src_trk[0]/rs_reg_trk/fsm[1:0]
+    - group_name: Src2
+      expand: false
+      children:
+        - type: signal
+          enum: true
+          group_name: g_src_trk[1]/rs_reg_trk/fsm[1:0]
+
+issue_pkt_guts: &issue_pkt_guts
+  children:
+    - path: robid/
+      children:
+        - wrap
+    - src1_val[63:0]
+    - src2_val[63:0]
+
+rs: &rs
+  expand: False
+  expand_all: True
+  group_name: RS0
+  path: rs/
+  children:
+    - e_valid[7:0]
+    - group_name: RS Entries
+      type: repeat
+      count: 8
+      var: _eid
+      expand: False
+      child:
+        <<: *rs_entry
+        path: g_entries[{_eid}]/entry/
+        group_name: Entry {_eid}
+
+    - group_name: RS2
+      children:
+        - iss_rs2
+        - <<: *issue_pkt_guts
+          path: iss_pkt_rs2/
+          group_name: iss_pkt_rs2
+
+
+rename: &rename
+  expand: False
+  expand_all: True
+  group_name: RENAME
+  path: rename/
+  children:
+    - valid_rn0
+    - rob_ready_rn0
+    - valid_rn1
+
+alloc: &alloc
+  expand: False
+  expand_all: True
+  group_name: ALLOC
+  path: alloc/
+  children:
+    - valid_ra0
+    - valid_ra1
+    - stall_ra1
+
+ucode: &ucode
+  expand: False
+  group_name: UCODE
+  path: ucode/
+  children:
+    - ucrom_active_uc0
+    - ucode_ready_uc0
+    - useq_pc[11:0]
+    - br_mispred_pdg
 
 duts:
   core:
     group_name: Core
     path: /TOP/top/core/
+    expand: True
+    expand_all: False
     children:
       - *fetch
       - *decode
+      - *ucode
+      - *rename
+      - *alloc
+      - *rs
       - *exec
+      - *mem
+      - *rob
+      - *l2

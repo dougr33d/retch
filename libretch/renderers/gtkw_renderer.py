@@ -12,41 +12,41 @@ from libretch.nodes.abstract_node import AbstractNode
 from libretch.renderers.abstract_renderer import AbstractRenderer
 
 class TraceEntFlagBits(IntEnum):
-    TR_HIGHLIGHT = 0
-    TR_HEX = auto()
-    TR_DEC = auto()
-    TR_BIN = auto()
-    TR_OCT = auto()
-    TR_RJUSTIFY = auto()
-    TR_INVERT = auto()
-    TR_REVERSE = auto()
-    TR_EXCLUDE = auto()
-    TR_BLANK = auto()
-    TR_SIGNED = auto()
-    TR_ASCII = auto()
-    TR_COLLAPSED = auto()
-    TR_FTRANSLATED = auto()
-    TR_PTRANSLATED = auto()
-    TR_ANALOG_STEP = auto()
-    TR_ANALOG_INTERPOLATED = auto()
-    TR_ANALOG_BLANK_STRETCH = auto()
-    TR_REAL = auto()
-    TR_ANALOG_FULLSCALE = auto()
-    TR_ZEROFILL = auto()
-    TR_ONEFILL = auto()
-    TR_CLOSED = auto()
-    TR_GRP_BEGIN = auto()
-    TR_GRP_END = auto()
-    TR_BINGRAY = auto()
-    TR_GRAYBIN = auto()
-    TR_REAL2BITS = auto()
-    TR_TTRANSLATED = auto()
-    TR_POPCNT = auto()
-    TR_FPDECSHIFT = auto()
-    TR_TIME = auto()
-    TR_ENUM = auto()
-    TR_CURSOR = auto()
-    TR_FFO = auto()
+    TR_HIGHLIGHT = 0  # 0
+    TR_HEX = auto()  # 1
+    TR_DEC = auto()  # 2
+    TR_BIN = auto()  # 3
+    TR_OCT = auto()  # 4
+    TR_RJUSTIFY = auto()  # 5
+    TR_INVERT = auto()  # 6
+    TR_REVERSE = auto()  # 7
+    TR_EXCLUDE = auto()  # 8
+    TR_BLANK = auto()  # 9
+    TR_SIGNED = auto()  # 10
+    TR_ASCII = auto()  # 11
+    TR_COLLAPSED = auto()  # 12
+    TR_FTRANSLATED = auto()  # 13
+    TR_PTRANSLATED = auto()  # 14
+    TR_ANALOG_STEP = auto()  # 15
+    TR_ANALOG_INTERPOLATED = auto()  # 16
+    TR_ANALOG_BLANK_STRETCH = auto()  # 17
+    TR_REAL = auto()  # 18
+    TR_ANALOG_FULLSCALE = auto()  # 19
+    TR_ZEROFILL = auto()  # 20
+    TR_ONEFILL = auto()  # 21
+    TR_CLOSED = auto()  # 22
+    TR_GRP_BEGIN = auto()  # 23
+    TR_GRP_END = auto()  # 24
+    TR_BINGRAY = auto()  # 25
+    TR_GRAYBIN = auto()  # 26
+    TR_REAL2BITS = auto()  # 27
+    TR_TTRANSLATED = auto()  # 28
+    TR_POPCNT = auto()  # 29
+    TR_FPDECSHIFT = auto()  # 30
+    TR_TIME = auto()  # 31
+    TR_ENUM = auto()  # 32
+    TR_CURSOR = auto()  # 33
+    TR_FFO = auto()  # 34
 
 class GTKWaveRenderer(AbstractRenderer):
     """GTKWave Renderer
@@ -65,9 +65,12 @@ class GTKWaveRenderer(AbstractRenderer):
     def start_group(self, node: GroupNode) -> list:
         magic = self._to_magic(TraceEntFlagBits.TR_GRP_BEGIN, TraceEntFlagBits.TR_BLANK)
         if (not node.is_expanded):
-            magic = self._to_magic(TraceEntFlagBits.TR_GRP_BEGIN, TraceEntFlagBits.TR_BLANK, TraceEntFlagBits.TR_COLLAPSED)
+            magic = self._to_magic(TraceEntFlagBits.TR_GRP_BEGIN, TraceEntFlagBits.TR_BLANK, TraceEntFlagBits.TR_CLOSED)
 
         grp = node._expand_str_with_var_dict(node._get_param('group_name',None))
+
+        if grp == None:
+            return []
 
         lines = [magic,'-' + grp]
         return lines
@@ -76,11 +79,17 @@ class GTKWaveRenderer(AbstractRenderer):
         magic = self._to_magic(TraceEntFlagBits.TR_GRP_END, TraceEntFlagBits.TR_BLANK)
         grp = node._expand_str_with_var_dict(node._get_param('group_name',None))
 
+        if grp == None:
+            return []
+
         lines = [magic, '-' + grp]
         return lines
 
     def signal(self, node: AbstractNode) -> list:
-        magic = self._to_magic(TraceEntFlagBits.TR_HEX, TraceEntFlagBits.TR_RJUSTIFY)
+        flags = [TraceEntFlagBits.TR_HEX, TraceEntFlagBits.TR_RJUSTIFY]
+        if node._get_param('enum', False):
+            flags = [TraceEntFlagBits.TR_ENUM, TraceEntFlagBits.TR_BIN, TraceEntFlagBits.TR_RJUSTIFY]
+        magic = self._to_magic(*flags)
 
         sig = node._expand_str_with_var_dict(node._get_param('group_name'))
         full_sig = f"{node.full_path}{sig}".replace('/', '.')

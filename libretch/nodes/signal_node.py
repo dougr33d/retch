@@ -22,6 +22,7 @@ class SignalNode(AbstractNode):
                           }
         super().__init__(nf=nf, renderer=renderer, param_dict=param_dict, parent=parent, var_dict=var_dict)
         self._update_param('group_name', 'required', True)
+        self._register_param_def('enum', bool, required=False, inherits=False)
 
     ### Public methods
     def render(self) -> list[str]:

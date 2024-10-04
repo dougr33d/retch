@@ -102,7 +102,7 @@ class AbstractNode(abc.ABC):
         Note that not all params can be inherited, so that needs to be checked
         before a param from the resulting dictionary can be used!"""
         if self._parent != None:
-            return dict(**self._parent._get_full_param_dict(), **self._params) #type: ignore
+            return self._parent._get_full_param_dict() | self._params #type: ignore
         else:
             return self._params
 
