@@ -12,14 +12,11 @@ init: $(ENV_PYTHON)
 
 run: example.rc example.gtkw
 
-example.rc: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
-	$(ENV_PYTHON) $(RETCH_BIN) $(EXAMPLE_YAML) -f rc $@
+%.rc: %.yaml $(REQUIREMENTS_TXT)
+	$(ENV_PYTHON) $(RETCH_BIN) $< -f rc $@
 
-example.gtkw: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
-	$(ENV_PYTHON) $(RETCH_BIN) $(EXAMPLE_YAML) -f gtkw $@
-
-vroom.gtkw: $(REQUIREMENTS_TXT) $(VROOM_YAML)
-	$(ENV_PYTHON) $(RETCH_BIN) $(VROOM_YAML) -f gtkw $@
+%.gtkw: %.yaml $(REQUIREMENTS_TXT)
+	$(ENV_PYTHON) $(RETCH_BIN) $< -f gtkw $@
 
 lint: $(REQUIREMENTS_TXT) $(EXAMPLE_YAML)
 	$(ENV_PYTHON) -m mypy $(RETCH_BIN)
